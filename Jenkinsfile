@@ -1,3 +1,4 @@
+
 pipeline {
     environment {
       IMAGE_NAME = "mkingst14/train-schedule"
@@ -55,3 +56,4 @@ pipeline {
           }
       }
   }
+}
