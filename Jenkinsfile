@@ -40,6 +40,7 @@ pipeline {
             }
         }
         stage('Deploy Container to Production') {
+          script {
                 def dockerStop = "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
                 def dockerRun = "docker run -d \
                                   --name ${CONTAINER_NAME} \
@@ -50,5 +51,6 @@ pipeline {
                     sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerRun}"
               }
           }
+        }
       }
   }
