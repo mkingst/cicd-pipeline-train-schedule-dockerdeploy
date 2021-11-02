@@ -44,6 +44,8 @@ pipeline {
                 branch 'master'
             }
             steps { 
+                input 'Deploy to Production'
+                milestone(1)
                 script {
                     def dockerStop = "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
                     def dockerRun = "docker run -d \
