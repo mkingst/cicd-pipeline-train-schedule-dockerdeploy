@@ -37,15 +37,15 @@ pipeline {
                     }
                 }
             }
-        stage('Deploy Container on Server') {
-            steps {
-                sh "docker stop ${IMAGE_NAME} || true && docker rm ${IMAGE_NAME} || true"
-                sh "docker run -d \
-                    --name ${IMAGE_NAME} \
-                    --publish ${PORT}:8080 \
-                    ${IMAGE_NAME}:${env.BUILD_NUMBER}"
-            }
         }
+        stage('Deploy Container on Server') {
+              steps {
+                  sh "docker stop ${IMAGE_NAME} || true && docker rm ${IMAGE_NAME} || true"
+                  sh "docker run -d \
+                      --name ${IMAGE_NAME} \
+                      --publish ${PORT}:8080 \
+                      ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+              }
+          }
       }
     }
-}
