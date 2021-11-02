@@ -40,17 +40,22 @@ pipeline {
             }
         }
         stage('Deploy Container to Production') {
-          script {
-                def dockerStop = "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
-                def dockerRun = "docker run -d \
-                                  --name ${CONTAINER_NAME} \
-                                  --publish ${PORT}:8080 \
-                                  ${IMAGE_NAME}:${env.BUILD_NUMBER}"
-                sshagent(['prod-server']) {
-                    sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerStop}"
-                    sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerRun}"
+            when {
+                branch 'master'
+            }
+            steps { 
+                script {
+                    def dockerStop = "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
+                    def dockerRun = "docker run -d \
+                                      --name ${CONTAINER_NAME} \
+                                      --publish ${PORT}:8080 \
+                                      ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+                    sshagent(['prod-server']) {
+                        sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerStop}"
+                        sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerRun}"
               }
           }
         }
       }
+    }
   }
