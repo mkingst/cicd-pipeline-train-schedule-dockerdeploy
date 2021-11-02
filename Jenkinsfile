@@ -1,4 +1,3 @@
-
 pipeline {
     environment {
       IMAGE_NAME = "mkingst14/train-schedule"
@@ -41,9 +40,6 @@ pipeline {
             }
         }
         stage('Deploy Container to Production') {
-              steps {
-                input 'Deploy to Production'
-                milestone(1)
                 def dockerStop = "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
                 def dockerRun = "docker run -d \
                                   --name ${CONTAINER_NAME} \
@@ -56,4 +52,3 @@ pipeline {
           }
       }
   }
-}
