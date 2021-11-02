@@ -41,13 +41,16 @@ pipeline {
         }
         stage('Deploy Container to Production') {
               steps {
-                  input 'Deploy to Production'
-                  milestone(1)
-                  sh "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
-                  sh "docker run -d \
-                      --name ${CONTAINER_NAME} \
-                      --publish ${PORT}:8080 \
-                      ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+                input 'Deploy to Production'
+                milestone(1)
+                def dockerStop = "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
+                def dockerRun = "docker run -d \
+                                  --name ${CONTAINER_NAME} \
+                                  --publish ${PORT}:8080 \
+                                  ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+                sshagent(['prod-server']) {
+                    sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerStop}"
+                    sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerRun}"
               }
           }
       }
