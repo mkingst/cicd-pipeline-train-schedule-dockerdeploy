@@ -34,5 +34,18 @@ pipeline {
                 }
             }
         }
+        stage ('DeployToProduction') {
+            when {
+                branch 'master'
+            }
+            steps {
+                input 'Deploy to Production'
+                milestone(1)
+                    script {
+                        sh "docker run -p 8090:8080 -d mkingst14/train-schedule"
+                    }
+                }
+            }
+        }
     }   
 }
