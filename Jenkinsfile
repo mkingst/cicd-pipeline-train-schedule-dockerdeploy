@@ -19,7 +19,7 @@ pipeline {
             }
             steps {
                 script {
-                    app = docker.build("mkingst14/train-schedule")
+                    app = docker.build("${IMAGE_NAME}")
                     app.inside {
                         sh 'echo $(curl localhost:8080)'
                     }
@@ -39,8 +39,10 @@ pipeline {
                 }
             }
         }
-        stage('Deploy Container on Server') {
+        stage('Deploy Container to Production') {
               steps {
+                  input 'Deploy to Production'
+                  milestone(1)
                   sh "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
                   sh "docker run -d \
                       --name ${CONTAINER_NAME} \
