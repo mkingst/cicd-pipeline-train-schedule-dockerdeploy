@@ -2,6 +2,7 @@ pipeline {
     environment {
       IMAGE_NAME = "mkingst14/train-schedule"
       PORT = "8090"
+      CONTAINER_NAME = "train-schedule"
     }
     agent any
     stages {
@@ -40,9 +41,9 @@ pipeline {
         }
         stage('Deploy Container on Server') {
               steps {
-                  sh "docker stop ${IMAGE_NAME} || true && docker rm ${IMAGE_NAME} || true"
+                  sh "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
                   sh "docker run -d \
-                      --name ${IMAGE_NAME} \
+                      --name ${CONTAINER_NAME} \
                       --publish ${PORT}:8080 \
                       ${IMAGE_NAME}:${env.BUILD_NUMBER}"
               }
