@@ -53,8 +53,8 @@ pipeline {
                                       --publish ${PORT}:8080 \
                                       ${IMAGE_NAME}:${env.BUILD_NUMBER}"
                     sshagent(['prod-server']) {
-                        sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerStop}"
-                        sh "ssh -o StrictHostKeyChecking=no admin@ec2-18-203-155-90.eu-west-1.compute.amazonaws.com ${dockerRun}"
+                        sh "ssh -o StrictHostKeyChecking=no admin@18.202.204.125 ${dockerStop}"
+                        sh "ssh -o StrictHostKeyChecking=no admin@18.202.204.125 ${dockerRun}"
               }
           }
         }
