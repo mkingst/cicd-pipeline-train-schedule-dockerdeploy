@@ -1,4 +1,8 @@
 pipeline {
+    environment {
+      IMAGE_NAME = "mkingst14/train-schedule"
+      PORT = "8090"
+    }
     agent any
     stages {
         stage('Build') {
@@ -14,7 +18,7 @@ pipeline {
             }
             steps {
                 script {
-                    app = docker.build("mkingst14/train-schedule")
+                    app = docker.build("<DOCKER_HUB_USERNAME>/train-schedule")
                     app.inside {
                         sh 'echo $(curl localhost:8080)'
                     }
@@ -33,18 +37,15 @@ pipeline {
                     }
                 }
             }
-        }
-        stage ('DeployToProduction') {
-            when {
-                branch 'master'
-            }
+        stage('Deploy Container on Server') {
             steps {
-                input 'Deploy to Production'
-                milestone(1)
-                    script {
-                        sh "docker run -p 8090:8080 -d mkingst14/train-schedule"
-                    }
-                }
+                sh "docker stop ${IMAGE_NAME} || true && docker rm ${IMAGE_NAME} || true"
+                sh "docker run -d \
+                    --name ${IMAGE_NAME} \
+                    --publish ${PORT}:8080 \
+                    ${IMAGE_NAME}:${env.BUILD_NUMBER}"
             }
         }
-    }   
+      }
+    }
+}
