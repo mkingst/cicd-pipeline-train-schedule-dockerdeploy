@@ -1,6 +1,8 @@
 pipeline {
     environment {
       IMAGE_NAME = "mkingst14/train-schedule"
+      PORT = "8090"
+      CONTAINER_NAME = "train-schedule"
     }
     agent any
     stages {
@@ -17,7 +19,7 @@ pipeline {
             }
             steps {
                 script {
-                    app = docker.build("mkingst14/train-schedule")
+                    app = docker.build("${IMAGE_NAME}")
                     app.inside {
                         sh 'echo $(curl localhost:8080)'
                     }
@@ -36,6 +38,26 @@ pipeline {
                     }
                 }
             }
-        }  
+        }
+        stage('Deploy Container to Production') {
+            when {
+                branch 'master'
+            }
+            steps { 
+                input 'Deploy to Production'
+                milestone(1)
+                script {
+                    def dockerStop = "docker stop ${CONTAINER_NAME} || true && docker rm ${CONTAINER_NAME} || true"
+                    def dockerRun = "docker run -d \
+                                      --name ${CONTAINER_NAME} \
+                                      --publish ${PORT}:8080 \
+                                      ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+                    sshagent(['prod-server']) {
+                        sh "ssh -o StrictHostKeyChecking=no admin@34.254.159.143 ${dockerStop}"
+                        sh "ssh -o StrictHostKeyChecking=no admin@34.254.159.143 ${dockerRun}"
+              }
+          }
+        }
+      }
     }
-}
+  }
