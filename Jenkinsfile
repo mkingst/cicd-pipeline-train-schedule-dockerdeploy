@@ -1,7 +1,7 @@
 pipeline {
     environment {
       IMAGE_NAME = "mkingst14/train-schedule"
-      PORT = "8090"
+      PORT = "8079"
       CONTAINER_NAME = "train-schedule"
     }
     agent any
