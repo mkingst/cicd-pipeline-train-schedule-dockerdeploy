@@ -52,7 +52,7 @@ pipeline {
                                       --name ${CONTAINER_NAME} \
                                       --publish ${PORT}:8080 \
                                       ${IMAGE_NAME}:${env.BUILD_NUMBER}"
-                    sshagent(['prod-server']) {
+                    sshagent(['prod_server']) {
                         sh "ssh -o StrictHostKeyChecking=no admin@34.254.159.143 ${dockerStop}"
                         sh "ssh -o StrictHostKeyChecking=no admin@34.254.159.143 ${dockerRun}"
               }
